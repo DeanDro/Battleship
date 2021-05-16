@@ -71,6 +71,9 @@ class GameLogic:
             if not self._vessels_location[target_player][boat]['x']:
                 self._vessels_location[target_player][boat]['x'] = ['destroyed']
                 self._vessels_location[target_player][boat]['y'] = ['destroyed']
+
+            # Check if game ended
+            self._winner()
             return True
         else:
             self._shots_fired[current_player][new_key] = [box_x, box_x + 49, box_y, box_y + 49, 'white']
@@ -99,10 +102,23 @@ class GameLogic:
                 self._vessels_location[players_turn][ship_type]['y'].append(i)
             self._vessels_location[players_turn][ship_type]['x'] = [x_coord]
 
+    def _winner(self):
+        """Checks if someone won the game. Returns a tuple with boolean and winner's name"""
+        end_of_game = True
+        for player in self._vessels_location:
+            winner = player
+            for ship_type in self._vessels_location[player]:
+                for ship_coord in self._vessels_location[player][ship_type]:
+                    if self._vessels_location[player][ship_type][ship_coord] != ['destroyed']:
+                        end_of_game = False
+            if end_of_game:
+                return end_of_game, winner
+        return False, None
+
 
 test = GameLogic('Captain Hook')
-test._populate_vessel_dictionary(90, 52, 'horizontal', 'vessel', 'human')
+# test._populate_vessel_dictionary(90, 52, 'horizontal', 'vessel', 'human')
+test.testing()
 print(test.get_vessels_location())
-print(test.get_cannon_coordinates(85, 65, 'human', 'ai'))
-print(test.get_shots_fired())
+# print(test.get_cannon_coordinates(85, 65, 'human', 'ai'))
 
