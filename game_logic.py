@@ -2,6 +2,7 @@
 
 from player import Player
 
+
 class GameLogic:
 
     """
@@ -114,11 +115,3 @@ class GameLogic:
             if end_of_game:
                 return end_of_game, winner
         return False, None
-
-
-test = GameLogic('Captain Hook')
-# test._populate_vessel_dictionary(90, 52, 'horizontal', 'vessel', 'human')
-test.testing()
-print(test.get_vessels_location())
-# print(test.get_cannon_coordinates(85, 65, 'human', 'ai'))
-

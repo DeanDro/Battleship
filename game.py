@@ -1,6 +1,7 @@
 """This class starts the battleship game and works as presentation layer"""
 import pygame
 import sys
+from game_logic import GameLogic
 
 
 class BattleShip:
@@ -16,6 +17,8 @@ class BattleShip:
         self._game_status = 'SETUP'
         self._running = True
         self._create_sea_map()
+        self._vertical_horizontal_lines()
+        self._game_logic = GameLogic(self._username)
         while self._running:
             for event in pygame.event.get():
                 self._event_handler(event)
@@ -32,3 +35,15 @@ class BattleShip:
         """It creates the sea map for the ships"""
         pygame.draw.rect(self._screen, (126, 5, 247), pygame.Rect(50, 50, 1000, 600))
         pygame.display.flip()
+
+    def _vertical_horizontal_lines(self):
+        """Draws vertical and horizontal white lines on sea board"""
+        for i in range(1, 21):
+            pygame.draw.rect(self._screen, (255, 255, 255), pygame.Rect(i*50, 50, 1, 600))
+        for j in range(1, 13):
+            pygame.draw.rect(self._screen, (255, 255, 255), pygame.Rect(50, j*50, 1000, 1))
+
+    def _boats_setup(self):
+        """It puts the human user boats on the map"""
+        data = self._game_logic.get_vessels_location()
+
