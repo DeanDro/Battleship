@@ -26,6 +26,7 @@ class GameLogic:
                                   }
         self._shots_fired = {'human': {}, 'ai': {}}
         self._human = Player(human_name)
+        self.direction = 'horizontal'
         self._ai = Player('Computer')
 
     def get_vessels_location(self):
@@ -35,6 +36,10 @@ class GameLogic:
     def get_shots_fired(self):
         """Method to return the dictionary with the shots fired"""
         return self._shots_fired
+
+    def get_direction(self):
+        """It returns the direction for placing the boat"""
+        return self.direction
 
     def get_cannon_coordinates(self, coordx, coordy, target_player, current_player):
         """This method takes as parameters the target player, the player that shot, the x and y coordinates and returns
@@ -80,7 +85,7 @@ class GameLogic:
             self._shots_fired[current_player][new_key] = [box_x, box_x + 49, box_y, box_y + 49, 'white']
             return False
 
-    def _populate_vessel_dictionary(self, x_point, y_point, direction, ship_type, players_turn):
+    def _populate_vessel_dictionary(self, x_point, y_point, ship_type, players_turn):
         """
         This method takes from the user where the boats are placed in the map and populates the dictionary with their
         coordinates
@@ -92,7 +97,7 @@ class GameLogic:
         x_coord = (x_point // 50) * 50 + 1
         y_coord = (y_point // 50) * 50 + 1
 
-        if direction == 'horizontal':
+        if self.direction == 'horizontal':
             end_point = vessel_size[ship_type] * 50 + (x_point // 50)
             for i in range(x_coord, end_point, 50):
                 self._vessels_location[players_turn][ship_type]['x'].append(i)

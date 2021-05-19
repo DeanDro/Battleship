@@ -17,7 +17,6 @@ class BattleShip:
         # What stage of the game we are
         self._game_status = 'SETUP'
         # Board setup files
-        self._direction = 'horizontal'
         self._running = True
         # Creates map and board graphics
         self._create_sea_map()
@@ -37,6 +36,8 @@ class BattleShip:
             sys.exit()
         if self._game_status == 'SETUP':
             self._setup_button()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self._add_ships_on_map(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
     def _create_sea_map(self):
         """It creates the sea map for the ships"""
@@ -77,3 +78,31 @@ class BattleShip:
             self._screen.blit(text, (coord_x_y[0], coord_x_y[1]))
             self._screen.blit(boat_status, (coord_x_y[0]+70, coord_x_y[1]))
             coord_x_y[1] += 30
+
+    def _convert_click_to_box(self, coordx, coordy):
+        """This is a helper method. Takes coords from click and returns the actual box coordinates on map"""
+        if 50 < coordx < 1050 and 50 < coordy < 650:
+            x_pos = (coordx//50) * 50
+            y_pos = (coordy//50) * 50
+            return x_pos, y_pos
+        else:
+            return None
+
+    def _draw_color_box(self, x, y, color):
+        """It draws a color box to represent a ship or shot on the map. Takes the color and coordinates as parameter"""
+        pygame.draw.rect(self._screen, color, pygame.Rect(50, 50, x, y))
+
+    def _add_ships_on_map(self, coordx, coordy):
+        """This method puts each boat on the map and populates the players dictionary for human"""
+        pos = self._convert_click_to_box(coordx, coordy)
+        boat_size = {'vessel': 5, 'frigate': 4, 'galleon': 3, 'brig': 2}
+        pos_dic = self._game_logic.get_vessels_location()['human']
+        for vessel in pos_dic:
+            print(pos_dic)
+            if pos is not None:
+                self._game_logic._populate_vessel_dictionary(pos[0], pos[1], vessel, 'human')
+                mult = boat_size[vessel]
+                if self._game_logic.get_direction() == 'horizontal':
+                    self._draw_color_box(pos[0]*mult, pos[1], (109, 117, 112))
+                else:
+                    self._draw_color_box(pos[0], pos[1]*mult, (109, 117, 122))
