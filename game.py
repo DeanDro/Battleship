@@ -94,15 +94,22 @@ class BattleShip:
 
     def _add_ships_on_map(self, coordx, coordy):
         """This method puts each boat on the map and populates the players dictionary for human"""
-        pos = self._convert_click_to_box(coordx, coordy)
         boat_size = {'vessel': 5, 'frigate': 4, 'galleon': 3, 'brig': 2}
-        pos_dic = self._game_logic.get_vessels_location()['human']
-        for vessel in pos_dic:
-            print(pos_dic)
+        boats_order = ['vessel', 'frigate', 'galleon', 'brig']
+        counter = 0
+        while self._game_status == 'SETUP':
+            pos = self._convert_click_to_box(coordx, coordy)
+            print(pos)
             if pos is not None:
-                self._game_logic._populate_vessel_dictionary(pos[0], pos[1], vessel, 'human')
-                mult = boat_size[vessel]
-                if self._game_logic.get_direction() == 'horizontal':
-                    self._draw_color_box(pos[0]*mult, pos[1], (109, 117, 112))
-                else:
-                    self._draw_color_box(pos[0], pos[1]*mult, (109, 117, 122))
+                self._game_logic._populate_vessel_dictionary(pos[0], pos[1], boats_order[counter], 'human')
+                print(boat_size[boats_order[counter]])
+                for j in range(1, boat_size[boats_order[counter]]+1):
+                    if self._game_logic.get_direction() == 'horizontal':
+                        self._draw_color_box(pos[0]*j, pos[1], (109, 117, 112))
+                    else:
+                        self._draw_color_box(pos[0], pos[1]*j, (109, 117, 112))
+                if boats_order[counter] == 'brig':
+                    self._game_status = 'PLAY'
+                counter += 1
+            print(self._game_logic.get_vessels_location())
+

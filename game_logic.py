@@ -98,12 +98,12 @@ class GameLogic:
         y_coord = (y_point // 50) * 50 + 1
 
         if self.direction == 'horizontal':
-            end_point = vessel_size[ship_type] * 50 + (x_point // 50)
+            end_point = x_coord + vessel_size[ship_type] * 50 + (x_point // 50)
             for i in range(x_coord, end_point, 50):
                 self._vessels_location[players_turn][ship_type]['x'].append(i)
             self._vessels_location[players_turn][ship_type]['y'] = [y_coord]
         else:
-            end_point = vessel_size[ship_type] * 50 + (y_point // 50)
+            end_point = y_coord + vessel_size[ship_type] * 50 + (y_point // 50)
             for i in range(x_coord, end_point, 50):
                 self._vessels_location[players_turn][ship_type]['y'].append(i)
             self._vessels_location[players_turn][ship_type]['x'] = [x_coord]
@@ -120,3 +120,5 @@ class GameLogic:
             if end_of_game:
                 return end_of_game, winner
         return False, None
+
+
