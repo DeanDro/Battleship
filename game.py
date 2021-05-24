@@ -34,9 +34,9 @@ class BattleShip:
             self._running = False
             pygame.quit()
             sys.exit()
-        if self._game_status == 'SETUP':
-            self._setup_button()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self._game_status == 'SETUP':
+                self._setup_button()
                 self._add_ships_on_map(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
     def _create_sea_map(self):
@@ -88,28 +88,36 @@ class BattleShip:
         else:
             return None
 
-    def _draw_color_box(self, x, y, color):
+    def _draw_color_box(self, x, y, color, boat_size=1):
         """It draws a color box to represent a ship or shot on the map. Takes the color and coordinates as parameter"""
-        pygame.draw.rect(self._screen, color, pygame.Rect(50, 50, x, y))
+        if boat_size != 1 and self._game_logic.get_direction() == 'horizontal':
+            pygame.draw.rect(self._screen, color, pygame.Rect(x, y, 50*boat_size, 50))
+        elif boat_size != 1 and self._game_logic.get_direction() != 'horizontal':
+            pygame.draw.rect(self._screen, color, pygame.Rect(x, y, 50, 50*boat_size))
+        else:
+            pygame.draw.rect(self._screen, color, pygame.Rect(x, y, 50, 50))
+
+    def _draw_ship_on_map(self, coordx, coordy, ship_type, ship_size):
+        """
+        It draws the ship on the map. Takes coordinates x, y, ship type and ship size
+        """
+        # Convert coordinates to specific box
+        pos = self._convert_click_to_box(coordx, coordy)
+        # Add coordinates in dictionary for players
+        self._game_logic._populate_vessel_dictionary(pos[0], pos[1], ship_type, 'human')
+        # Add box on the map
+        self._draw_color_box(pos[0], pos[1], (109, 117, 112), ship_size)
 
     def _add_ships_on_map(self, coordx, coordy):
         """This method puts each boat on the map and populates the players dictionary for human"""
         boat_size = {'vessel': 5, 'frigate': 4, 'galleon': 3, 'brig': 2}
-        boats_order = ['vessel', 'frigate', 'galleon', 'brig']
-        counter = 0
-        while self._game_status == 'SETUP':
-            pos = self._convert_click_to_box(coordx, coordy)
-            print(pos)
-            if pos is not None:
-                self._game_logic._populate_vessel_dictionary(pos[0], pos[1], boats_order[counter], 'human')
-                print(boat_size[boats_order[counter]])
-                for j in range(1, boat_size[boats_order[counter]]+1):
-                    if self._game_logic.get_direction() == 'horizontal':
-                        self._draw_color_box(pos[0]*j, pos[1], (109, 117, 112))
-                    else:
-                        self._draw_color_box(pos[0], pos[1]*j, (109, 117, 112))
-                if boats_order[counter] == 'brig':
-                    self._game_status = 'PLAY'
-                counter += 1
-            print(self._game_logic.get_vessels_location())
+        if self._game_logic.get_vessels_location()['human']['vessel']['x'] == []:
+            self._draw_ship_on_map(coordx, coordy, 'vessel', 5)
+        elif self._game_logic.get_vessels_location()['human']['frigate']['x'] == []:
+            self._draw_ship_on_map(coordx, coordy, 'frigate', 4)
+        elif self._game_logic.get_vessels_location()['human']['galleon']['x'] == []:
+            self._draw_ship_on_map(coordx, coordy, 'galleon', 3)
+        else:
+            self._draw_ship_on_map(coordx, coordy, 'brig', 2)
+            self._game_status = 'PLAY'
 
