@@ -1,4 +1,5 @@
 # In this class we will hold all decisions made for AI in the game as well as respond to user moves
+import random
 
 from player import Player
 
@@ -40,6 +41,13 @@ class GameLogic:
     def get_direction(self):
         """It returns the direction for placing the boat"""
         return self.direction
+
+    def set_direction(self):
+        """Changes direction from vertical to horizontal and vice versa"""
+        if self.direction == 'horizontal':
+            self.direction = 'vertical'
+        else:
+            self.direction = 'horizontal'
 
     def get_cannon_coordinates(self, coordx, coordy, target_player, current_player):
         """This method takes as parameters the target player, the player that shot, the x and y coordinates and returns
@@ -104,7 +112,7 @@ class GameLogic:
             self._vessels_location[players_turn][ship_type]['y'] = [y_coord]
         else:
             end_point = y_coord + vessel_size[ship_type] * 50 + (y_point // 50)
-            for i in range(x_coord, end_point, 50):
+            for i in range(y_coord, end_point, 50):
                 self._vessels_location[players_turn][ship_type]['y'].append(i)
             self._vessels_location[players_turn][ship_type]['x'] = [x_coord]
 
@@ -121,4 +129,60 @@ class GameLogic:
                 return end_of_game, winner
         return False, None
 
+    def _fill_coordinates_tracker(self, coord, list_coordinates, ship_size):
+        """Adds poxes to the coordinates tracker to avoid overlap"""
+        for i in range(0, ship_size):
+            point = coord + (50 * i)
+            list_coordinates.append(point)
+
+    def _random_placement_ai_ships(self):
+        """It puts enemy ships on random places on the map"""
+        vessel_size = {'vessel': 5, 'frigate': 4, 'galleon': 3, 'brig': 2}
+        # Collect list of boxes filled with other ships to avoid merge
+        boxes_filled = []
+        for ship in self._vessels_location['ai']:
+            x_max_coord = 1050 - vessel_size[ship] * 50
+            y_max_coord = 650 - vessel_size[ship] * 50
+            orientation = random.randint(1, 2)
+
+            # Original coordinates for x, y
+            x_pos = 0
+            y_pos = 0
+
+            # if orientation is 1 then orientation is horizontal, for 2 is vertical
+            if orientation == 1:
+                self.direction = 'horizontal'
+                while y_pos == 0 or x_pos == 0 or y_pos in boxes_filled or x_pos in boxes_filled:
+                    # Convert coordinates to a box
+                    x_pos = (random.randint(50, x_max_coord) // 50) * 50 + 1
+                    y_pos = (random.randint(50, 600) // 50) * 50 + 1
+                self._populate_vessel_dictionary(x_pos, y_pos, ship, 'ai')
+
+                if x_pos in boxes_filled:
+                    print('Already exists dammash')
+
+                # Add boxes in coordinates taken
+                for x_coordinates in self._vessels_location['ai'][ship]['x']:
+                    self._fill_coordinates_tracker(x_coordinates, boxes_filled, vessel_size[ship])
+                for y_coordinates in self._vessels_location['ai'][ship]['y']:
+                    self._fill_coordinates_tracker(y_coordinates, boxes_filled, 1)
+            else:
+                self.direction = 'vertical'
+                while y_pos == 0 or x_pos == 0 or y_pos in boxes_filled or x_pos in boxes_filled:
+                    x_pos = (random.randint(50, 1050) // 50) * 50 + 1
+                    y_pos = (random.randint(50, y_max_coord) // 50) * 50 + 1
+                self._populate_vessel_dictionary(x_pos, y_pos, ship, 'ai')
+                # Add boxes in coordinates taken
+                for x_coordinates in self._vessels_location['ai'][ship]['x']:
+                    self._fill_coordinates_tracker(x_coordinates, boxes_filled, 1)
+                for y_coordinates in self._vessels_location['ai'][ship]['y']:
+                    self._fill_coordinates_tracker(y_coordinates, boxes_filled, vessel_size[ship])
+
+        # We set direction to horizontal as starting point for the human player.
+        self.direction = 'horizontal'
+        print(self._vessels_location['ai'])
+
+
+test = GameLogic('Dickhead')
+test._random_placement_ai_ships()
 

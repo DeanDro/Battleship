@@ -37,7 +37,7 @@ class BattleShip:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self._game_status == 'SETUP':
                 self._setup_button()
-                self._add_ships_on_map(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+                self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
     def _create_sea_map(self):
         """It creates the sea map for the ships"""
@@ -103,10 +103,16 @@ class BattleShip:
         """
         # Convert coordinates to specific box
         pos = self._convert_click_to_box(coordx, coordy)
-        # Add coordinates in dictionary for players
-        self._game_logic._populate_vessel_dictionary(pos[0], pos[1], ship_type, 'human')
-        # Add box on the map
-        self._draw_color_box(pos[0], pos[1], (109, 117, 112), ship_size)
+        if self._game_logic.get_direction() == 'horizontal' and 50<=pos[0]+(ship_size * 50)<=1050 and 50<=pos[1]<=650:
+            # Add coordinates in dictionary for players
+            self._game_logic._populate_vessel_dictionary(pos[0], pos[1], ship_type, 'human')
+            # Add box on the map
+            self._draw_color_box(pos[0], pos[1], (109, 117, 112), ship_size)
+        elif self._game_logic.get_direction() == 'vertical' and 50<=pos[0]<=1050 and 50<=pos[1]+(ship_size*50)<=650:
+            # Add coordinates in dictionary for players
+            self._game_logic._populate_vessel_dictionary(pos[0], pos[1], ship_type, 'human')
+            # Add box on the map
+            self._draw_color_box(pos[0], pos[1], (109, 117, 112), ship_size)
 
     def _add_ships_on_map(self, coordx, coordy):
         """This method puts each boat on the map and populates the players dictionary for human"""
@@ -121,3 +127,16 @@ class BattleShip:
             self._draw_ship_on_map(coordx, coordy, 'brig', 2)
             self._game_status = 'PLAY'
 
+    def _listen_for_clicks(self, coordx, coordy):
+        """
+        It takes two parameters coordinates x and y and activates the proper function
+        """
+        if 50 < coordx < 1050 and 50 < coordy < 650:
+            self._add_ships_on_map(coordx, coordy)
+        elif 1100 < coordx < 1200 and 550 < coordy < 600:
+            self._game_logic.set_direction()
+
+    def _draw_shots_on_map(self, coordx, coordy):
+        """
+        It marks hit or miss shots on enemy map
+        """
