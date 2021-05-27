@@ -135,60 +135,12 @@ class GameLogic:
             point = coord + (50 * i)
             list_coordinates.append(point)
 
-    def _random_placement_ai_ships(self):
-        """It puts enemy ships on random places on the map"""
-        vessel_size = {'vessel': 5, 'frigate': 4, 'galleon': 3, 'brig': 2}
-        # Collect list of boxes filled with other ships to avoid merge
-        boxes_filled = []
-        for ship in self._vessels_location['ai']:
-            x_max_coord = 1050 - vessel_size[ship] * 50
-            y_max_coord = 650 - vessel_size[ship] * 50
-            orientation = random.randint(1, 2)
-
-            # Original coordinates for x, y
-            x_pos = 0
-            y_pos = 0
-
-            # if orientation is 1 then orientation is horizontal, for 2 is vertical
-            if orientation == 1:
-                self.direction = 'horizontal'
-                while y_pos == 0 or x_pos == 0 or y_pos in boxes_filled or x_pos in boxes_filled:
-                    # Convert coordinates to a box
-                    x_pos = (random.randint(50, x_max_coord) // 50) * 50 + 1
-                    y_pos = (random.randint(50, 600) // 50) * 50 + 1
-                self._populate_vessel_dictionary(x_pos, y_pos, ship, 'ai')
-
-                if x_pos in boxes_filled:
-                    print('Already exists dammash')
-
-                # Add boxes in coordinates taken
-                for x_coordinates in self._vessels_location['ai'][ship]['x']:
-                    self._fill_coordinates_tracker(x_coordinates, boxes_filled, vessel_size[ship])
-                for y_coordinates in self._vessels_location['ai'][ship]['y']:
-                    self._fill_coordinates_tracker(y_coordinates, boxes_filled, 1)
-                    print(boxes_filled)
-            else:
-                self.direction = 'vertical'
-                print(boxes_filled)
-                while y_pos == 0 or x_pos == 0 or y_pos in boxes_filled or x_pos in boxes_filled:
-                    x_pos = (random.randint(50, 1050) // 50) * 50 + 1
-                    y_pos = (random.randint(50, y_max_coord) // 50) * 50 + 1
-                self._populate_vessel_dictionary(x_pos, y_pos, ship, 'ai')
-                # Add boxes in coordinates taken
-                for x_coordinates in self._vessels_location['ai'][ship]['x']:
-                    self._fill_coordinates_tracker(x_coordinates, boxes_filled, 1)
-                for y_coordinates in self._vessels_location['ai'][ship]['y']:
-                    self._fill_coordinates_tracker(y_coordinates, boxes_filled, vessel_size[ship])
-
-        # We set direction to horizontal as starting point for the human player.
-        self.direction = 'horizontal'
-        print(self._vessels_location['ai'])
-
     def _possible_coordinates(self):
         """Return a set of all possible coordinates"""
         set_values = set()
-        for i in range(50, 1050, 50):
-            for j in range(50, 650, 50):
+        # Because we count coordinates from 51 growing by 50, we will start possible options from 51
+        for i in range(51, 1050, 50):
+            for j in range(51, 650, 50):
                 set_values.add((i, j))
         return set_values
 
@@ -200,9 +152,9 @@ class GameLogic:
             orientation = random.randint(1, 2)
             if orientation == 1:
                 x_max = 1050 - (vessel_size[ship] * 50)
-                pos = []
                 incomplete = True
                 while incomplete:
+                    pos = []
                     x_pos = (random.randint(50, x_max) // 50) * 50 + 1
                     y_pos = (random.randint(50, 600) // 50) * 50 + 1
                     for i in range(0, vessel_size[ship]):
@@ -211,17 +163,30 @@ class GameLogic:
                     for j in pos:
                         if j not in available_coord:
                             check_coord = False
-                            break
                     if check_coord:
                         for w in pos:
                             available_coord.remove(w)
                             self._vessels_location['ai'][ship]['x'].append(w[0])
-                            self._vessels_location['ai'][ship]['y'] = w[1]
+                            self._vessels_location['ai'][ship]['y'] = [w[1]]
                             incomplete = False
-                    else:
-                        print(len(pos))
-        print(self._vessels_location['ai'])
+            else:
+                y_max = 650 - (vessel_size[ship] * 50)
+                incomplete = True
+                while incomplete:
+                    pos = []
+                    x_pos = (random.randint(50, 1000) // 50) * 50 + 1
+                    y_pos = (random.randint(50, y_max) // 50) * 50 + 1
+                    for i in range(0, vessel_size[ship]):
+                        pos.append((x_pos, y_pos + i * 50))
+                    check_coord = True
+                    for j in pos:
+                        print(j)
+                        if j not in available_coord:
+                            check_coord = False
+                    if check_coord:
+                        for w in pos:
+                            available_coord.remove(w)
+                            self._vessels_location['ai'][ship]['x'] = [w[0]]
+                            self._vessels_location['ai'][ship]['y'].append(w[1])
+                            incomplete = False
 
-
-test = GameLogic('Dickhead')
-print(test._ai_battle_ships())
