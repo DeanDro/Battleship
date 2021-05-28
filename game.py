@@ -23,10 +23,10 @@ class BattleShip:
         self._vertical_horizontal_lines()
         self._game_logic = GameLogic(self._username)
         self.mark_active_boats()
+        self._game_logic.setup_game()
         while self._running:
             for event in pygame.event.get():
                 # Populate ai boat dictionary
-                self._game_logic.setup_game()
                 self._event_handler(event)
             pygame.display.update()
 
@@ -41,13 +41,9 @@ class BattleShip:
                 self._setup_button()
                 self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
             elif self._game_status == 'PLAY':
-                if self._game_logic.get_shots_fired() == 0:
-                    self._show_game_icon('Start Game')
-                else:
-                    self._game_logic.get_cannon_coordinates(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1],
+                self._game_logic.get_cannon_coordinates(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1],
                                                             self._game_logic.get_opponent(),
                                                             self._game_logic.get_current_player())
-
 
     def _create_sea_map(self):
         """It creates the sea map for the ships"""
@@ -83,7 +79,7 @@ class BattleShip:
         for vessel in vessels['ai']:
             text = self._add_text_on_screen(vessel, 15)
             boat_status = self._add_text_on_screen('Active', 15, (15, 184, 68))
-            if vessels['ai'][vessel]['x'] == ['destroyed']:
+            if vessels['ai'][vessel] == ['destroyed']:
                 boat_status = self._add_text_on_screen('Destroyed', 15, (235, 0, 0))
             self._screen.blit(text, (coord_x_y[0], coord_x_y[1]))
             self._screen.blit(boat_status, (coord_x_y[0]+70, coord_x_y[1]))
@@ -127,11 +123,11 @@ class BattleShip:
     def _add_ships_on_map(self, coordx, coordy):
         """This method puts each boat on the map and populates the players dictionary for human"""
         boat_size = {'vessel': 5, 'frigate': 4, 'galleon': 3, 'brig': 2}
-        if self._game_logic.get_vessels_location()['human']['vessel']['x'] == []:
+        if self._game_logic.get_vessels_location()['human']['vessel'] == []:
             self._draw_ship_on_map(coordx, coordy, 'vessel', 5)
-        elif self._game_logic.get_vessels_location()['human']['frigate']['x'] == []:
+        elif self._game_logic.get_vessels_location()['human']['frigate'] == []:
             self._draw_ship_on_map(coordx, coordy, 'frigate', 4)
-        elif self._game_logic.get_vessels_location()['human']['galleon']['x'] == []:
+        elif self._game_logic.get_vessels_location()['human']['galleon'] == []:
             self._draw_ship_on_map(coordx, coordy, 'galleon', 3)
         else:
             self._draw_ship_on_map(coordx, coordy, 'brig', 2)
