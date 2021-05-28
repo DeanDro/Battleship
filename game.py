@@ -25,6 +25,8 @@ class BattleShip:
         self.mark_active_boats()
         while self._running:
             for event in pygame.event.get():
+                # Populate ai boat dictionary
+                self._game_logic.setup_game()
                 self._event_handler(event)
             pygame.display.update()
 
@@ -38,6 +40,14 @@ class BattleShip:
             if self._game_status == 'SETUP':
                 self._setup_button()
                 self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+            elif self._game_status == 'PLAY':
+                if self._game_logic.get_shots_fired() == 0:
+                    self._show_game_icon('Start Game')
+                else:
+                    self._game_logic.get_cannon_coordinates(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1],
+                                                            self._game_logic.get_opponent(),
+                                                            self._game_logic.get_current_player())
+
 
     def _create_sea_map(self):
         """It creates the sea map for the ships"""
@@ -131,12 +141,21 @@ class BattleShip:
         """
         It takes two parameters coordinates x and y and activates the proper function
         """
-        if 50 < coordx < 1050 and 50 < coordy < 650:
+        if 50 < coordx < 1050 and 50 < coordy < 650 and self._game_status == 'SETUP':
             self._add_ships_on_map(coordx, coordy)
-        elif 1100 < coordx < 1200 and 550 < coordy < 600:
+        elif 1100 < coordx < 1200 and 550 < coordy < 600 and self._game_status == 'SETUP':
             self._game_logic.set_direction()
 
     def _draw_shots_on_map(self, coordx, coordy):
         """
         It marks hit or miss shots on enemy map
         """
+
+    def _show_game_icon(self, message):
+        """
+        Shows a message in the middle of the screen
+        """
+        pygame.display.set_caption(message)
+        font = pygame.font.Font(pygame.font.get_default_font(), 35)
+        text = font.render(message, True, (255, 255, 255), (255, 0, 0))
+        self._screen.blit(text, (450, 700))

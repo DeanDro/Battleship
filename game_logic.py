@@ -28,7 +28,9 @@ class GameLogic:
         self._shots_fired = {'human': {}, 'ai': {}}
         self._human = Player(human_name)
         self.direction = 'horizontal'
-        self._ai = Player('Computer')
+        self._ai = Player('ai')
+        self._number_of_shoots = 0
+        self._current_player = 'human'
 
     def get_vessels_location(self):
         """Method to return the dictionary with the vessels locations."""
@@ -48,6 +50,27 @@ class GameLogic:
             self.direction = 'vertical'
         else:
             self.direction = 'horizontal'
+
+    def get_number_shots(self):
+        """Returns the number of shots fired"""
+        return self._number_of_shoots
+
+    def _update_player(self):
+        """Updates players turn"""
+        if self._current_player == 'human':
+            self._current_player = 'ai'
+        else:
+            self._current_player = 'human'
+
+    def get_current_player(self):
+        """Return players turn"""
+        return self._current_player
+
+    def get_opponent(self):
+        """Get the opponent player"""
+        if self._current_player == 'human':
+            return 'ai'
+        return 'human'
 
     def get_cannon_coordinates(self, coordx, coordy, target_player, current_player):
         """This method takes as parameters the target player, the player that shot, the x and y coordinates and returns
@@ -88,9 +111,13 @@ class GameLogic:
 
             # Check if game ended
             self._winner()
+            self._number_of_shoots += 1
+            self._update_player()
             return True
         else:
             self._shots_fired[current_player][new_key] = [box_x, box_x + 49, box_y, box_y + 49, 'white']
+            self._number_of_shoots += 1
+            self._update_player()
             return False
 
     def _populate_vessel_dictionary(self, x_point, y_point, ship_type, players_turn):
@@ -190,3 +217,6 @@ class GameLogic:
                             self._vessels_location['ai'][ship]['y'].append(w[1])
                             incomplete = False
 
+    def setup_game(self):
+        """Starts necessary private methods"""
+        self._ai_battle_ships()
