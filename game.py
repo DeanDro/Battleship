@@ -41,9 +41,7 @@ class BattleShip:
                 self._setup_button()
                 self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
             elif self._game_status == 'PLAY':
-                self._game_logic.get_cannon_coordinates(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1],
-                                                            self._game_logic.get_opponent(),
-                                                            self._game_logic.get_current_player())
+                self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
     def _create_sea_map(self):
         """It creates the sea map for the ships"""
@@ -141,6 +139,15 @@ class BattleShip:
             self._add_ships_on_map(coordx, coordy)
         elif 1100 < coordx < 1200 and 550 < coordy < 600 and self._game_status == 'SETUP':
             self._game_logic.set_direction()
+        elif 50 < coordx < 1050 and 50 < coordy < 650 and self._game_status == 'PLAY':
+            result = self._game_logic.get_cannon_coordinates(coordx, coordy)
+            print(result)
+            boxes = self._convert_click_to_box(result[1], result[2])
+            if boxes:
+                if result[0]:
+                    self._draw_color_box(boxes[0], boxes[1], (255, 0, 0))
+                else:
+                    self._draw_color_box(boxes[0], boxes[1], (182, 191, 207))
 
     def _draw_shots_on_map(self, coordx, coordy):
         """
