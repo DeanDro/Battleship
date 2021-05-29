@@ -140,19 +140,18 @@ class BattleShip:
         elif 1100 < coordx < 1200 and 550 < coordy < 600 and self._game_status == 'SETUP':
             self._game_logic.set_direction()
         elif 50 < coordx < 1050 and 50 < coordy < 650 and self._game_status == 'PLAY':
-            result = self._game_logic.get_cannon_coordinates(coordx, coordy)
-            print(result)
-            boxes = self._convert_click_to_box(result[1], result[2])
-            if boxes:
-                if result[0]:
-                    self._draw_color_box(boxes[0], boxes[1], (255, 0, 0))
-                else:
-                    self._draw_color_box(boxes[0], boxes[1], (182, 191, 207))
+            self._draw_shots_on_map(coordx, coordy)
 
     def _draw_shots_on_map(self, coordx, coordy):
         """
         It marks hit or miss shots on enemy map
         """
+        result = self._game_logic.get_cannon_coordinates(coordx, coordy)
+        boxes = self._convert_click_to_box(result[1], result[2])
+        if result[0]:
+            self._draw_color_box(boxes[0], boxes[1], (255, 0, 0))
+        else:
+            self._draw_color_box(boxes[0], boxes[1], (182, 191, 207))
 
     def _show_game_icon(self, message):
         """

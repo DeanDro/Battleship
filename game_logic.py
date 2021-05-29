@@ -89,6 +89,7 @@ class GameLogic:
 
         # Each time the particular player shots. It will be added incrementally in the dictionary
         new_key = len(self._shots_fired[self._current_player]) + 1
+        self._number_of_shoots += 1
         # we rotate through the types of ships
         for value in self._vessels_location[target_player]:
             boat_size = len(self._vessels_location[target_player][value])
@@ -98,20 +99,20 @@ class GameLogic:
                     self._shots_fired[self._current_player][new_key] = [box_x, box_x + 49, box_y, box_y + 49, 'red']
                     self._vessels_location[target_player][value][i] = []
 
-                # Check if boat destroyed
-                if not self._vessels_location[target_player][value]:
-                    self._vessels_location[target_player][value] = ['destroyed']
+                    # Check if boat destroyed
+                    if not self._vessels_location[target_player][value]:
+                        self._vessels_location[target_player][value] = ['destroyed']
 
-            # Check if game ended
-            self._winner()
-            self._number_of_shoots += 1
-            self._update_player()
-            return [True, box_x, box_y]
+                    # Check if game ended
+                    self._winner()
+                    self._update_player()
+                    # return [True, box_x, box_y]
         if miss:
             self._shots_fired[self._current_player][new_key] = [box_x, box_x + 49, box_y, box_y + 49, 'white']
-            self._number_of_shoots += 1
             self._update_player()
             return [False, box_x, box_y]
+        else:
+            return [True, box_x, box_y]
 
     def _populate_vessel_dictionary(self, x_point, y_point, ship_type, players_turn):
         """
@@ -199,7 +200,6 @@ class GameLogic:
                     if check_coord:
                         self._vessels_location['ai'][ship] = pos
                         incomplete = False
-        print(self._vessels_location['ai'])
 
     def setup_game(self):
         """Starts necessary private methods"""
