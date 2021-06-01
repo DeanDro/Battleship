@@ -40,6 +40,12 @@ class BattleShip:
             if self._game_status == 'SETUP':
                 self._setup_button()
                 self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+            elif self._game_status == 'START':
+                self._create_sea_map()
+                self._vertical_horizontal_lines()
+                self._game_status = 'PLAY'
+                pygame.draw.rect(self._screen, (0, 0, 0), pygame.Rect(1100, 550, 100, 50))
+                pygame.display.update()
             elif self._game_status == 'PLAY':
                 self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
@@ -55,9 +61,9 @@ class BattleShip:
         for j in range(1, 13):
             pygame.draw.rect(self._screen, (255, 255, 255), pygame.Rect(50, j*50, 1000, 1))
 
-    def _setup_button(self):
+    def _setup_button(self, x_size=100, y_size=50, color=(235, 94, 52)):
         """Adding the rotation button on the board"""
-        pygame.draw.rect(self._screen, (235, 94, 52), pygame.Rect(1100, 550, 100, 50))
+        pygame.draw.rect(self._screen, (235, 94, 52), pygame.Rect(1100, 550, x_size, y_size))
         text = self._add_text_on_screen('Rotate', 25)
         self._screen.blit(text, (1110, 560))
         pygame.display.update()
@@ -129,7 +135,7 @@ class BattleShip:
             self._draw_ship_on_map(coordx, coordy, 'galleon', 3)
         else:
             self._draw_ship_on_map(coordx, coordy, 'brig', 2)
-            self._game_status = 'PLAY'
+            self._game_status = 'START'
 
     def _listen_for_clicks(self, coordx, coordy):
         """
@@ -144,14 +150,20 @@ class BattleShip:
 
     def _draw_shots_on_map(self, coordx, coordy):
         """
-        It marks hit or miss shots on enemy map
+        It marks hit or miss shots on enemy map. It checks if shot has already been fired.
         """
         result = self._game_logic.get_cannon_coordinates(coordx, coordy)
         boxes = self._convert_click_to_box(result[1], result[2])
-        if result[0]:
-            self._draw_color_box(boxes[0], boxes[1], (255, 0, 0))
-        else:
-            self._draw_color_box(boxes[0], boxes[1], (182, 191, 207))
+        shots = self._game_logic.get_shots_fired()['human']
+        shot_fired = False
+        for shot in shots:
+            if shots[shot][0] == (boxes[0], boxes[1]):
+                shot_fired = True
+        if not shot_fired:
+            if result[0]:
+                self._draw_color_box(boxes[0], boxes[1], (255, 0, 0))
+            else:
+                self._draw_color_box(boxes[0], boxes[1], (182, 191, 207))
 
     def _show_game_icon(self, message):
         """

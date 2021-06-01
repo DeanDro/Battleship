@@ -96,7 +96,7 @@ class GameLogic:
             for i in range(0, boat_size):
                 if self._vessels_location[target_player][value][i] == (box_x, box_y):
                     miss = False
-                    self._shots_fired[self._current_player][new_key] = [box_x, box_x + 49, box_y, box_y + 49, 'red']
+                    self._shots_fired[self._current_player][new_key] = [(box_x, box_y), 'red']
                     self._vessels_location[target_player][value][i] = []
 
                     # Check if boat destroyed
@@ -108,7 +108,7 @@ class GameLogic:
                     self._update_player()
                     # return [True, box_x, box_y]
         if miss:
-            self._shots_fired[self._current_player][new_key] = [box_x, box_x + 49, box_y, box_y + 49, 'white']
+            self._shots_fired[self._current_player][new_key] = [(box_x, box_y), 'white']
             self._update_player()
             return [False, box_x, box_y]
         else:
