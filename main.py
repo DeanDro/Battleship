@@ -27,15 +27,10 @@ class Application(tk.Frame):
         input_box.pack()
 
         # Buttons
-        self.add_buttons(self._start_game(), 'Start Game')
-        self.add_buttons(self._cancel_game(), 'Cancel')
-
-    def add_buttons(self, command_function, button_text):
-        """
-        Add buttons
-        """
-        button = tk.Button(self._master, text=button_text, font=('Arial', 15), command=command_function)
-        button.pack()
+        game_button = tk.Button(self.master, text='Start Game', font=('Arial', 15), command=self._start_game)
+        cancel_button = tk.Button(self.master, text='Cancel', font=('Arial', 15), command=self._cancel_game)
+        game_button.pack()
+        cancel_button.pack()
 
     def _start_game(self):
         """It starts the game"""
