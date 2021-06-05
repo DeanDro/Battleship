@@ -38,7 +38,7 @@ class BattleShip:
             sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self._game_status == 'SETUP':
-                self._setup_button()
+                self._setup_button('Rotate')
                 self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
             elif self._game_status == 'START':
                 self._create_sea_map()
@@ -61,10 +61,10 @@ class BattleShip:
         for j in range(1, 13):
             pygame.draw.rect(self._screen, (255, 255, 255), pygame.Rect(50, j*50, 1000, 1))
 
-    def _setup_button(self, x_size=100, y_size=50, color=(235, 94, 52)):
+    def _setup_button(self, message, x_size=100, y_size=50, color=(235, 94, 52)):
         """Adding the rotation button on the board"""
-        pygame.draw.rect(self._screen, (235, 94, 52), pygame.Rect(1100, 550, x_size, y_size))
-        text = self._add_text_on_screen('Rotate', 25)
+        pygame.draw.rect(self._screen, color, pygame.Rect(1100, 550, x_size, y_size))
+        text = self._add_text_on_screen(message, 25)
         self._screen.blit(text, (1110, 560))
         pygame.display.update()
 
@@ -147,8 +147,11 @@ class BattleShip:
             self._game_logic.set_direction()
         elif 50 < coordx < 1050 and 50 < coordy < 650 and self._game_status == 'PLAY':
             self._load_shots_on_map()   # Load previous shots for current player
+            # It doesn't capture players in the right order!!!
+            self._setup_button(str(self._game_logic.get_current_player()), 100, 50, (0, 0, 0))
             self._draw_shots_on_map(coordx, coordy)     # Player automatically changes
-            self._load_shots_on_map()   # Reload map for the new player with his previous shots.
+            self._load_shots_on_map('opponent')   # Reload map for the same player to show new shot
+            self._load_shots_on_map()   # Load next players shots so he can make a new
 
     def _draw_shots_on_map(self, coordx, coordy):
         """
@@ -176,11 +179,14 @@ class BattleShip:
         text = font.render(message, True, (255, 255, 255), (255, 0, 0))
         self._screen.blit(text, (450, 700))
 
-    def _load_shots_on_map(self):
+    def _load_shots_on_map(self, player='current'):
         """
         Loads all shots fired from current player on the map
         """
-        shots_dict = self._game_logic.get_shots_fired()[self._game_logic.get_current_player()]
+        if player == 'current':
+            shots_dict = self._game_logic.get_shots_fired()[self._game_logic.get_current_player()]
+        else:
+            shots_dict = self._game_logic.get_shots_fired()[self._game_logic.get_opponent()]
         self._create_sea_map()
         self._vertical_horizontal_lines()
         for key in shots_dict:
