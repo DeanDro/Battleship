@@ -20,17 +20,17 @@ class Application(tk.Frame):
 
     def _create_widget(self):
         """Creates an input for username"""
-        name_label = tk.Label(self._master, text="Username", font=('Arial', 15), bg="#000000")
+        name_label = tk.Label(self._master, text="Username", font=('Arial', 20), fg='#ffffff')
         name_label.configure(bg="#5D05C8")
         input_box = tk.Entry(self._master, textvariable=self._username, font=('Arial', 10))
-        name_label.pack()
-        input_box.pack()
+        name_label.grid(column=0, row=0, pady=20)
+        input_box.grid(column=1, row=0, pady=20)
 
         # Buttons
         game_button = tk.Button(self.master, text='Start Game', font=('Arial', 15), command=self._start_game)
         cancel_button = tk.Button(self.master, text='Cancel', font=('Arial', 15), command=self._cancel_game)
-        game_button.pack()
-        cancel_button.pack()
+        game_button.grid(column=0, row=1, padx=40, pady=40)
+        cancel_button.grid(column=1, row=1, padx=40, pady=40)
 
     def _start_game(self):
         """It starts the game"""

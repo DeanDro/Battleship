@@ -146,7 +146,9 @@ class BattleShip:
         elif 1100 < coordx < 1200 and 550 < coordy < 600 and self._game_status == 'SETUP':
             self._game_logic.set_direction()
         elif 50 < coordx < 1050 and 50 < coordy < 650 and self._game_status == 'PLAY':
-            self._draw_shots_on_map(coordx, coordy)
+            self._load_shots_on_map()   # Load previous shots for current player
+            self._draw_shots_on_map(coordx, coordy)     # Player automatically changes
+            self._load_shots_on_map()   # Reload map for the new player with his previous shots.
 
     def _draw_shots_on_map(self, coordx, coordy):
         """
@@ -173,3 +175,15 @@ class BattleShip:
         font = pygame.font.Font(pygame.font.get_default_font(), 35)
         text = font.render(message, True, (255, 255, 255), (255, 0, 0))
         self._screen.blit(text, (450, 700))
+
+    def _load_shots_on_map(self):
+        """
+        Loads all shots fired from current player on the map
+        """
+        shots_dict = self._game_logic.get_shots_fired()[self._game_logic.get_current_player()]
+        self._create_sea_map()
+        self._vertical_horizontal_lines()
+        for key in shots_dict:
+            box_x = shots_dict[key][0][0]
+            box_y = shots_dict[key][0][1]
+            self._draw_color_box(box_x, box_y, shots_dict[key][1])
