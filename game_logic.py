@@ -105,13 +105,13 @@ class GameLogic:
 
                     # Check if game ended
                     self._winner()
-                    self._update_player()
                     # return [True, box_x, box_y]
         if miss:
             self._shots_fired[self._current_player][new_key] = [(box_x, box_y), (182, 191, 207)]
             self._update_player()
             return [False, box_x, box_y]
         else:
+            self._update_player()
             return [True, box_x, box_y]
 
     def _populate_vessel_dictionary(self, x_point, y_point, ship_type, players_turn):

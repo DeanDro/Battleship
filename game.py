@@ -45,8 +45,10 @@ class BattleShip:
                 self._vertical_horizontal_lines()
                 self._game_status = 'PLAY'
                 pygame.draw.rect(self._screen, (0, 0, 0), pygame.Rect(1100, 550, 100, 50))
+                self._setup_button(str(self._game_logic.get_current_player()), 100, 50, (0, 0, 0))
                 pygame.display.update()
             elif self._game_status == 'PLAY':
+                self._setup_button(str(self._game_logic.get_current_player()), 100, 50, (0, 0, 0))
                 self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
     def _create_sea_map(self):
@@ -148,7 +150,6 @@ class BattleShip:
         elif 50 < coordx < 1050 and 50 < coordy < 650 and self._game_status == 'PLAY':
             self._load_shots_on_map()   # Load previous shots for current player
             # It doesn't capture players in the right order!!!
-            self._setup_button(str(self._game_logic.get_current_player()), 100, 50, (0, 0, 0))
             self._draw_shots_on_map(coordx, coordy)     # Player automatically changes
             self._load_shots_on_map('opponent')   # Reload map for the same player to show new shot
             self._load_shots_on_map()   # Load next players shots so he can make a new
