@@ -45,10 +45,9 @@ class BattleShip:
                 self._vertical_horizontal_lines()
                 self._game_status = 'PLAY'
                 pygame.draw.rect(self._screen, (0, 0, 0), pygame.Rect(1100, 550, 100, 50))
-                self._setup_button(str(self._game_logic.get_current_player()), 100, 50, (0, 0, 0))
                 pygame.display.update()
             elif self._game_status == 'PLAY':
-                self._setup_button(str(self._game_logic.get_current_player()), 100, 50, (0, 0, 0))
+                self._setup_button(str(self._game_logic.get_opponent()), 100, 50, (0, 0, 0))
                 self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
     def _create_sea_map(self):
