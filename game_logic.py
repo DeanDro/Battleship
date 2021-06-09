@@ -100,7 +100,7 @@ class GameLogic:
                     self._vessels_location[target_player][value][i] = []
 
                     # Check if boat destroyed
-                    if not self._vessels_location[target_player][value]:
+                    if self._check_boat_destroyed(target_player, value):
                         self._vessels_location[target_player][value] = ['destroyed']
 
                     # Check if game ended
@@ -113,6 +113,17 @@ class GameLogic:
         else:
             self._update_player()
             return [True, box_x, box_y]
+
+    def _check_boat_destroyed(self, target_player, vessel):
+        """
+        Helper method to check if a boat has been destroyed. Takes as parameters target player and vessel and returns
+        True if the vessel was destroyed
+        """
+        destroyed = True
+        for coord in self._vessels_location[target_player][vessel]:
+            if not coord == []:
+                destroyed = False
+        return destroyed
 
     def _populate_vessel_dictionary(self, x_point, y_point, ship_type, players_turn):
         """

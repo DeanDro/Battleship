@@ -22,7 +22,8 @@ class BattleShip:
         self._create_sea_map()
         self._vertical_horizontal_lines()
         self._game_logic = GameLogic(self._username)
-        self.mark_active_boats()
+        self.mark_active_boats([1100, 30])
+        self.mark_active_boats([1100, 200], 'human')
         self._game_logic.setup_game()
         while self._running:
             for event in pygame.event.get():
@@ -47,6 +48,8 @@ class BattleShip:
                 pygame.draw.rect(self._screen, (0, 0, 0), pygame.Rect(1100, 550, 100, 50))
                 pygame.display.update()
             elif self._game_status == 'PLAY':
+                self.mark_active_boats([1100, 30])
+                self.mark_active_boats([1100, 200], 'human')
                 self._setup_button(str(self._game_logic.get_opponent()), 100, 50, (0, 0, 0))
                 self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
@@ -75,16 +78,16 @@ class BattleShip:
         text = font.render(text, True, color)
         return text
 
-    def mark_active_boats(self):
+    def mark_active_boats(self, start_pos, player='ai'):
         """It marks active or inactive an enemy vessel if it gets destroyed"""
-        vessels = self._game_logic.get_vessels_location()
-        boats_list = self._add_text_on_screen('Enemy Boats', 20, (235, 0, 0))
-        self._screen.blit(boats_list, (1100, 30))
-        coord_x_y = [1100, 60]
-        for vessel in vessels['ai']:
+        vessels = self._game_logic.get_vessels_location()[player]
+        boats_list = self._add_text_on_screen(player+' Boats', 20, (235, 0, 0))
+        self._screen.blit(boats_list, (start_pos[0], start_pos[1]))
+        coord_x_y = [start_pos[0], start_pos[1]+30]
+        for vessel in vessels:
             text = self._add_text_on_screen(vessel, 15)
             boat_status = self._add_text_on_screen('Active', 15, (15, 184, 68))
-            if vessels['ai'][vessel] == ['destroyed']:
+            if vessels[vessel] == ['destroyed']:
                 boat_status = self._add_text_on_screen('Destroyed', 15, (235, 0, 0))
             self._screen.blit(text, (coord_x_y[0], coord_x_y[1]))
             self._screen.blit(boat_status, (coord_x_y[0]+70, coord_x_y[1]))
