@@ -86,9 +86,11 @@ class BattleShip:
         coord_x_y = [start_pos[0], start_pos[1]+30]
         for vessel in vessels:
             text = self._add_text_on_screen(vessel, 15)
-            boat_status = self._add_text_on_screen('Active', 15, (15, 184, 68))
             if vessels[vessel] == ['destroyed']:
+                pygame.draw.rect(self._screen, (0, 0, 0), pygame.Rect(coord_x_y[0]+60, coord_x_y[1], 100, 20))
                 boat_status = self._add_text_on_screen('Destroyed', 15, (235, 0, 0))
+            else:
+                boat_status = self._add_text_on_screen('Active', 15, (15, 184, 68))
             self._screen.blit(text, (coord_x_y[0], coord_x_y[1]))
             self._screen.blit(boat_status, (coord_x_y[0]+70, coord_x_y[1]))
             coord_x_y[1] += 30
