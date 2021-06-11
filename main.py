@@ -20,6 +20,7 @@ class Application(tk.Frame):
 
     def _create_widget(self):
         """Creates an input for username"""
+        self._add_background_image('boat_background.png')
         name_label = tk.Label(self._master, text="Username", font=('Arial', 20), fg='#ffffff')
         name_label.configure(bg="#5D05C8")
         input_box = tk.Entry(self._master, textvariable=self._username, font=('Arial', 10))
@@ -31,6 +32,14 @@ class Application(tk.Frame):
         cancel_button = tk.Button(self.master, text='Cancel', font=('Arial', 15), command=self._cancel_game)
         game_button.grid(column=0, row=1, padx=40, pady=40)
         cancel_button.grid(column=1, row=1, padx=40, pady=40)
+
+    def _add_background_image(self, photo):
+        """
+        Takes the picture location and loads it as a background
+        """
+        background_image = tk.PhotoImage(file=photo)
+        background_label = tk.Label(self._master, image=background_image, height=400, width=400)
+        background_label.place(x=0, y=0)
 
     def _start_game(self):
         """It starts the game"""
@@ -44,6 +53,5 @@ class Application(tk.Frame):
 
 root = tk.Tk()
 root.geometry('400x400')
-root.configure(bg="#5D05C8")
 battleship = Application(root)
 battleship.mainloop()

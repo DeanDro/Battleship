@@ -12,6 +12,7 @@ class BattleShip:
         """Initiates the game and takes as a parameter the users name"""
         pygame.init()
         self._screen = pygame.display.set_mode((1380, 800))
+        self._screen.fill((54, 48, 33))
         self._username = username
         self._board_font = pygame.font.SysFont('Arial', 15, bold=pygame.font.Font.bold)
         # What stage of the game we are
@@ -50,7 +51,7 @@ class BattleShip:
             elif self._game_status == 'PLAY':
                 self.mark_active_boats([1100, 30])
                 self.mark_active_boats([1100, 200], 'human')
-                self._setup_button(str(self._game_logic.get_opponent()), 100, 50, (0, 0, 0))
+                self._setup_button(str(self._game_logic.get_opponent()), 100, 50, (54, 48, 33))
                 self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
                 self._check_for_winner()
             elif self._game_status == 'END':
@@ -90,7 +91,7 @@ class BattleShip:
         for vessel in vessels:
             text = self._add_text_on_screen(vessel, 15)
             if vessels[vessel] == ['destroyed']:
-                pygame.draw.rect(self._screen, (0, 0, 0), pygame.Rect(coord_x_y[0]+60, coord_x_y[1], 100, 20))
+                pygame.draw.rect(self._screen, (54, 48, 33), pygame.Rect(coord_x_y[0]+60, coord_x_y[1], 100, 20))
                 boat_status = self._add_text_on_screen('Destroyed', 15, (235, 0, 0))
             else:
                 boat_status = self._add_text_on_screen('Active', 15, (15, 184, 68))
