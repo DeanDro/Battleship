@@ -72,6 +72,12 @@ class GameLogic:
             return 'ai'
         return 'human'
 
+    def get_winner(self):
+        """
+        Returns tuple with true and winner's name if there is a winner already otherwise returns False, None
+        """
+        return self._winner()
+
     def get_cannon_coordinates(self, coordx, coordy):
         """This method takes as parameters the target player, the player that shot, the x and y coordinates and returns
         a list with true if it hit an enemy boat or false if it was a miss and the x, y coordinates"""
@@ -79,40 +85,40 @@ class GameLogic:
         # clicked on. Multiplying by 50 will give us the starting point x of the box the user clicked. Adding
         # 50 will give us the end point of that box. Similar for y. Also we add the color of the box in the
         # list that goes in the dictionary with shots fired to indicated if it was hit or miss.
-        box_x = (coordx // 50) * 50 + 1
-        box_y = (coordy // 50) * 50 + 1
-        miss = True
 
-        target_player = 'human'
-        if self._current_player == 'human':
-            target_player = 'ai'
+        # Check if we have already a winner
+        if not self._winner()[0]:
+            box_x = (coordx // 50) * 50 + 1
+            box_y = (coordy // 50) * 50 + 1
+            miss = True
 
-        # Each time the particular player shots. It will be added incrementally in the dictionary
-        new_key = len(self._shots_fired[self._current_player]) + 1
-        self._number_of_shoots += 1
-        # we rotate through the types of ships
-        for value in self._vessels_location[target_player]:
-            boat_size = len(self._vessels_location[target_player][value])
-            for i in range(0, boat_size):
-                if self._vessels_location[target_player][value][i] == (box_x, box_y):
-                    miss = False
-                    self._shots_fired[self._current_player][new_key] = [(box_x, box_y), (255, 0, 0)]
-                    self._vessels_location[target_player][value][i] = []
+            target_player = 'human'
+            if self._current_player == 'human':
+                target_player = 'ai'
 
-                    # Check if boat destroyed
-                    if self._check_boat_destroyed(target_player, value):
-                        self._vessels_location[target_player][value] = ['destroyed']
+            # Each time the particular player shots. It will be added incrementally in the dictionary
+            new_key = len(self._shots_fired[self._current_player]) + 1
+            self._number_of_shoots += 1
+            # we rotate through the types of ships
+            for value in self._vessels_location[target_player]:
+                boat_size = len(self._vessels_location[target_player][value])
+                for i in range(0, boat_size):
+                    if self._vessels_location[target_player][value][i] == (box_x, box_y):
+                        miss = False
+                        self._shots_fired[self._current_player][new_key] = [(box_x, box_y), (255, 0, 0)]
+                        self._vessels_location[target_player][value][i] = []
 
-                    # Check if game ended
-                    self._winner()
-                    # return [True, box_x, box_y]
-        if miss:
-            self._shots_fired[self._current_player][new_key] = [(box_x, box_y), (182, 191, 207)]
-            self._update_player()
-            return [False, box_x, box_y]
-        else:
-            self._update_player()
-            return [True, box_x, box_y]
+                        # Check if boat destroyed
+                        if self._check_boat_destroyed(target_player, value):
+                            self._vessels_location[target_player][value] = ['destroyed']
+
+            if miss:
+                self._shots_fired[self._current_player][new_key] = [(box_x, box_y), (182, 191, 207)]
+                self._update_player()
+                return [False, box_x, box_y]
+            else:
+                self._update_player()
+                return [True, box_x, box_y]
 
     def _check_boat_destroyed(self, target_player, vessel):
         """

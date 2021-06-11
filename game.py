@@ -52,6 +52,9 @@ class BattleShip:
                 self.mark_active_boats([1100, 200], 'human')
                 self._setup_button(str(self._game_logic.get_opponent()), 100, 50, (0, 0, 0))
                 self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+                self._check_for_winner()
+            elif self._game_status == 'END':
+                self._check_for_winner()
 
     def _create_sea_map(self):
         """It creates the sea map for the ships"""
@@ -198,3 +201,13 @@ class BattleShip:
             box_x = shots_dict[key][0][0]
             box_y = shots_dict[key][0][1]
             self._draw_color_box(box_x, box_y, shots_dict[key][1])
+
+    def _check_for_winner(self):
+        """
+        If some already won, no more clicks available and winner is displayed
+        """
+        winner = self._game_logic.get_winner()
+        if winner[0]:
+            self._game_status = 'END'
+            winner = self._add_text_on_screen(winner[1]+' WON!', 50, (102, 204, 0))
+            self._screen.blit(winner, (400, 300))
