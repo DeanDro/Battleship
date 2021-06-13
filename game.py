@@ -46,7 +46,7 @@ class BattleShip:
                 self._create_sea_map()
                 self._vertical_horizontal_lines()
                 self._game_status = 'PLAY'
-                pygame.draw.rect(self._screen, (0, 0, 0), pygame.Rect(1100, 550, 100, 50))
+                pygame.draw.rect(self._screen, (54, 48, 33), pygame.Rect(1100, 550, 100, 50))
                 pygame.display.update()
             elif self._game_status == 'PLAY':
                 self.mark_active_boats([1100, 30])
