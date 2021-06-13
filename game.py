@@ -16,7 +16,7 @@ class BattleShip:
         self._username = username
         self._board_font = pygame.font.SysFont('Arial', 15, bold=pygame.font.Font.bold)
         # What stage of the game we are
-        self._game_status = 'SETUP'
+        self._game_status = 'PRE-SETUP'
         # Board setup files
         self._running = True
         # Creates map and board graphics
@@ -39,6 +39,9 @@ class BattleShip:
             pygame.quit()
             sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN:
+            if self._game_status == 'PRE-SETUP':
+                self._setup_button('Rotate')
+                self._game_status = 'SETUP'
             if self._game_status == 'SETUP':
                 self._setup_button('Rotate')
                 self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
@@ -47,6 +50,7 @@ class BattleShip:
                 self._vertical_horizontal_lines()
                 self._game_status = 'PLAY'
                 pygame.draw.rect(self._screen, (54, 48, 33), pygame.Rect(1100, 550, 100, 50))
+                self._setup_button(str(self._game_logic.get_current_player()), 100, 50, (54, 48, 33))
                 pygame.display.update()
             elif self._game_status == 'PLAY':
                 self.mark_active_boats([1100, 30])
@@ -151,9 +155,9 @@ class BattleShip:
         """
         It takes two parameters coordinates x and y and activates the proper function
         """
-        if 50 < coordx < 1050 and 50 < coordy < 650 and self._game_status == 'SETUP':
+        if 50 < coordx < 1050 and 50 < coordy < 650 and (self._game_status == 'SETUP' or self._game_status == 'PRE-SETUP'):
             self._add_ships_on_map(coordx, coordy)
-        elif 1100 < coordx < 1200 and 550 < coordy < 600 and self._game_status == 'SETUP':
+        elif 1100 < coordx < 1200 and 550 < coordy < 600 and (self._game_status == 'SETUP' or self._game_status == 'PRE-SETUP'):
             self._game_logic.set_direction()
         elif 50 < coordx < 1050 and 50 < coordy < 650 and self._game_status == 'PLAY':
             self._load_shots_on_map()   # Load previous shots for current player
