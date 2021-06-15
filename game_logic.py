@@ -31,6 +31,10 @@ class GameLogic:
         self._ai = Player('ai')
         self._number_of_shoots = 0
         self._current_player = 'human'
+        # Variable to store the size of each boat
+        self._ai_targets = {'vessel': 5, 'frigate': 4, 'galleon': 3, 'brig': 2}
+        # Variable to store if there is an active target for ai
+        self._active_target = {'active': False, 'coord': None}
 
     def get_vessels_location(self):
         """Method to return the dictionary with the vessels locations."""
@@ -221,3 +225,12 @@ class GameLogic:
     def setup_game(self):
         """Starts necessary private methods"""
         self._ai_battle_ships()
+
+    def _ai_response(self):
+        """
+        A method for all the moves that the AI will do in the game
+        """
+        if self._active_target['active']:
+            red_box = self._active_target['coord']
+            if self._shots_fired['ai'][0][0] + 50 < 1050 and self._shots_fired['ai'][1] ==(255, 0, 0):
+
