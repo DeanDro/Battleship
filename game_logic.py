@@ -103,8 +103,7 @@ class GameLogic:
             self._number_of_shoots += 1
             # we rotate through the types of ships
             for value in self._vessels_location[target_player]:
-                boat_size = len(self._vessels_location[target_player][value])
-                for i in range(0, boat_size):
+                for i in range(len(self._vessels_location[target_player][value])):
                     if self._vessels_location[target_player][value][i] == (box_x, box_y):
                         miss = False
                         self._shots_fired[self._current_player][(box_x, box_y)] = [(box_x, box_y), (255, 0, 0)]
@@ -256,5 +255,5 @@ class GameLogic:
             rand_x = random.randint(50, 1050)
             rand_y = random.randint(50, 650)
             self._coord_converter(rand_x, rand_y)
-            if self._shots_fired[(rand_x, rand_y)][1] == (255, 0, 0):
+            if self._shots_fired['ai'][(rand_x, rand_y)][1] == (255, 0, 0):
                 self._active_target = {'active': True, 'coord': (rand_x, rand_y)}

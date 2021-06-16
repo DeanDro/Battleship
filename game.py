@@ -172,7 +172,7 @@ class BattleShip:
         """
         result = self._game_logic.get_cannon_coordinates(coordx, coordy)
         boxes = self._convert_click_to_box(result[1], result[2])
-        shots = self._game_logic.get_shots_fired()['human']
+        shots = self._game_logic.get_shots_fired()[self._game_logic.get_current_player()]
         shot_fired = False
         for shot in shots:
             if shots[shot][0] == (boxes[0], boxes[1]):
