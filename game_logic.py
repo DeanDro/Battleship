@@ -100,8 +100,6 @@ class GameLogic:
             if self._current_player == 'human':
                 target_player = 'ai'
 
-            # Each time the particular player shots. It will be added incrementally in the dictionary
-            new_key = len(self._shots_fired[self._current_player]) + 1
             self._number_of_shoots += 1
             # we rotate through the types of ships
             for value in self._vessels_location[target_player]:
@@ -109,7 +107,7 @@ class GameLogic:
                 for i in range(0, boat_size):
                     if self._vessels_location[target_player][value][i] == (box_x, box_y):
                         miss = False
-                        self._shots_fired[self._current_player][new_key] = [(box_x, box_y), (255, 0, 0)]
+                        self._shots_fired[self._current_player][(box_x, box_y)] = [(box_x, box_y), (255, 0, 0)]
                         self._vessels_location[target_player][value][i] = []
 
                         # Check if boat destroyed
@@ -117,7 +115,7 @@ class GameLogic:
                             self._vessels_location[target_player][value] = ['destroyed']
 
             if miss:
-                self._shots_fired[self._current_player][new_key] = [(box_x, box_y), (182, 191, 207)]
+                self._shots_fired[self._current_player][(box_x, box_y)] = [(box_x, box_y), (182, 191, 207)]
                 self._update_player()
                 return [False, box_x, box_y]
             else:
@@ -226,11 +224,37 @@ class GameLogic:
         """Starts necessary private methods"""
         self._ai_battle_ships()
 
-    def _ai_response(self):
+    def _coord_converter(self, x, y):
+        """Takes coordinates and converts them to specific box coordinates"""
+        point_x = (x // 50) * 50 + 1
+        point_y = (y // 50) * 50 + 1
+        return point_x, point_y
+
+    def _update_active_targets(self, x, y):
+        if self._shots_fired['ai'][(x, y)][1] == (255, 0, 0):
+            self._active_target = {'active': True, 'coord': (x, y)}
+
+    def _ai_response(self, x, y):
         """
         A method for all the moves that the AI will do in the game
         """
         if self._active_target['active']:
             red_box = self._active_target['coord']
-            if self._shots_fired['ai'][0][0] + 50 < 1050 and self._shots_fired['ai'][1] ==(255, 0, 0):
-
+            if self._active_target['coord'][0] < 1001 and not self._shots_fired['ai'][(x+50, y)]:
+                self.get_cannon_coordinates(x+50, y)
+                self._update_active_targets(x+50, y)
+            elif self._active_target['coord'][0] > 100 and not self._shots_fired['ai'][(x-50, y)]:
+                self.get_cannon_coordinates(x-50, y)
+                self._update_active_targets(x-50, y)
+            elif self._active_target['coord'][1] > 100 and not self._shots_fired['ai'][(x, y-50)]:
+                self.get_cannon_coordinates(x, y-50)
+                self._update_active_targets(x, y-50)
+            elif self._active_target['coord'][1] < 600 and not self._shots_fired['ai'][(x, y+50)]:
+                self.get_cannon_coordinates(x, y+50)
+                self._update_active_targets(x, y+50)
+        else:
+            rand_x = random.randint(50, 1050)
+            rand_y = random.randint(50, 650)
+            self._coord_converter(rand_x, rand_y)
+            if self._shots_fired[(rand_x, rand_y)][1] == (255, 0, 0):
+                self._active_target = {'active': True, 'coord': (rand_x, rand_y)}
