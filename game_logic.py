@@ -155,14 +155,13 @@ class GameLogic:
 
     def _winner(self):
         """Checks if someone won the game. Returns a tuple with boolean and winner's name"""
-        end_of_game = True
         for player in self._vessels_location:
-            winner = player
+            end_of_game = True
             for ship_type in self._vessels_location[player]:
                 if self._vessels_location[player][ship_type] != ['destroyed']:
                     end_of_game = False
             if end_of_game:
-                return end_of_game, winner
+                return end_of_game, player
         return False, None
 
     def _fill_coordinates_tracker(self, coord, list_coordinates, ship_size):
@@ -219,6 +218,7 @@ class GameLogic:
                     if check_coord:
                         self._vessels_location['ai'][ship] = pos
                         incomplete = False
+        print(self._vessels_location['ai'])
 
     def setup_game(self):
         """Starts necessary private methods"""

@@ -59,7 +59,7 @@ class BattleShip:
                 self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
                 self._check_for_winner()
             elif self._game_status == 'END':
-                self._check_for_winner()
+                self._show_winner()
 
     def _create_sea_map(self):
         """It creates the sea map for the ships"""
@@ -209,10 +209,14 @@ class BattleShip:
 
     def _check_for_winner(self):
         """
-        If some already won, no more clicks available and winner is displayed
+        If some already won, no more clicks available and game status changes to END
         """
         winner = self._game_logic.get_winner()
         if winner[0]:
             self._game_status = 'END'
-            winner = self._add_text_on_screen(winner[1]+' WON!', 50, (102, 204, 0))
-            self._screen.blit(winner, (400, 300))
+
+    def _show_winner(self):
+        """Shows on screen the winner"""
+        winner = self._game_logic.get_winner()
+        winner = self._add_text_on_screen(winner[1]+' WON!', 50, (102, 204, 0))
+        self._screen.blit(winner, (400, 300))
