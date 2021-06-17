@@ -103,11 +103,11 @@ class GameLogic:
             self._number_of_shoots += 1
             # we rotate through the types of ships
             for value in self._vessels_location[target_player]:
-                for i in range(len(self._vessels_location[target_player][value])):
-                    if self._vessels_location[target_player][value][i] == (box_x, box_y):
+                for loc in self._vessels_location[target_player][value]:
+                    if loc == (box_x, box_y):
                         miss = False
                         self._shots_fired[self._current_player][(box_x, box_y)] = [(box_x, box_y), (255, 0, 0)]
-                        self._vessels_location[target_player][value][i] = []
+                        self._update_vessels(box_x, box_y, target_player, value)
 
                         # Check if boat destroyed
                         if self._check_boat_destroyed(target_player, value):
@@ -196,6 +196,7 @@ class GameLogic:
                     for i in range(0, vessel_size[ship]):
                         pos.append((x_pos + i * 50, y_pos))
                     check_coord = True
+                    # Check if a ship already in that location
                     for j in pos:
                         if j not in available_coord:
                             check_coord = False
@@ -257,3 +258,12 @@ class GameLogic:
             self._coord_converter(rand_x, rand_y)
             if self._shots_fired['ai'][(rand_x, rand_y)][1] == (255, 0, 0):
                 self._active_target = {'active': True, 'coord': (rand_x, rand_y)}
+
+    def _update_vessels(self, coordx, coordy, target_player, ship):
+        """
+        Takes the coordinates, target player and ship to update vessels dictionary when a vessel is hit. Coordinates
+        are in tuples, target_player and ship a string
+        """
+        for i in range(len(self._vessels_location[target_player][ship])):
+            if self._vessels_location[target_player][ship][i] == (coordx, coordy):
+                self._vessels_location[target_player][ship][i] = []
