@@ -128,7 +128,7 @@ class GameLogic:
         """
         destroyed = True
         for coord in self._vessels_location[target_player][vessel]:
-            if not coord == []:
+            if not coord == ['hit']:
                 destroyed = False
         return destroyed
 
@@ -218,6 +218,8 @@ class GameLogic:
                     if check_coord:
                         self._vessels_location['ai'][ship] = pos
                         incomplete = False
+
+        # For testing print ai positions
         print(self._vessels_location['ai'])
 
     def setup_game(self):
@@ -266,4 +268,4 @@ class GameLogic:
         """
         for i in range(len(self._vessels_location[target_player][ship])):
             if self._vessels_location[target_player][ship][i] == (coordx, coordy):
-                self._vessels_location[target_player][ship][i] = []
+                self._vessels_location[target_player][ship][i] = ['hit']
