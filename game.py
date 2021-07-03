@@ -50,7 +50,6 @@ class BattleShip:
                 self._vertical_horizontal_lines()
                 self._game_status = 'PLAY'
                 pygame.draw.rect(self._screen, (54, 48, 33), pygame.Rect(1100, 550, 100, 50))
-                self._setup_button(str(self._game_logic.get_current_player()), 100, 50, (54, 48, 33))
                 pygame.display.update()
             elif self._game_status == 'PLAY':
                 self.mark_active_boats([1100, 30])
@@ -170,7 +169,7 @@ class BattleShip:
         """
         It marks hit or miss shots on enemy map. It checks if shot has already been fired.
         """
-        result = self._game_logic.get_cannon_coordinates(coordx, coordy)
+        result = self._game_logic.get_cannon_shots(coordx, coordy)
         boxes = self._convert_click_to_box(result[1], result[2])
         shots = self._game_logic.get_shots_fired()[self._game_logic.get_current_player()]
         shot_fired = False

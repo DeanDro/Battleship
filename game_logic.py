@@ -82,44 +82,44 @@ class GameLogic:
         """
         return self._winner()
 
-    def get_cannon_coordinates(self, coordx, coordy):
-        """This method takes as parameters the target player, the player that shot, the x and y coordinates and returns
-        a list with true if it hit an enemy boat or false if it was a miss and the x, y coordinates"""
+    def get_cannon_shots(self, coordx, coordy):
+        """
+        This method takes as parameters the target player, the player that shot, the x and y coordinates and returns
+        a list with true if it hit an enemy boat or false if it was a miss and the x, y coordinates
+        """
         # Each box in the board is 50x50. By dividing coordx with 50 we will get the box before the one the user
         # clicked on. Multiplying by 50 will give us the starting point x of the box the user clicked. Adding
         # 50 will give us the end point of that box. Similar for y. Also we add the color of the box in the
         # list that goes in the dictionary with shots fired to indicated if it was hit or miss.
 
-        # Check if we have already a winner
         if not self._winner()[0]:
             box_x = (coordx // 50) * 50 + 1
             box_y = (coordy // 50) * 50 + 1
-            miss = True
 
-            target_player = 'human'
-            if self._current_player == 'human':
-                target_player = 'ai'
+            # Check if the player has already shot this box
+            if (box_x, box_y) not in self._shots_fired[self._current_player]:
+                target_player = self.get_opponent()
+                for value in self._vessels_location[target_player]:
+                    for loc in self._vessels_location[target_player][value]:
 
-            self._number_of_shoots += 1
-            # we rotate through the types of ships
-            for value in self._vessels_location[target_player]:
-                for loc in self._vessels_location[target_player][value]:
-                    if loc == (box_x, box_y):
-                        miss = False
-                        self._shots_fired[self._current_player][(box_x, box_y)] = [(box_x, box_y), (255, 0, 0)]
-                        self._update_vessels(box_x, box_y, target_player, value)
+                        # Check shot hit vessel
+                        if loc == (box_x, box_y):
+                            self._shots_fired[self._current_player][(box_x, box_y)] = [(box_x, box_y), (255, 0, 0)]
+                            self._update_vessels(box_x, box_y, target_player, value)
 
-                        # Check if boat destroyed
-                        if self._check_boat_destroyed(target_player, value):
-                            self._vessels_location[target_player][value] = ['destroyed']
+                            # Check boat destroyed
+                            if self._check_boat_destroyed(target_player, value):
+                                self._vessels_location[target_player][value] = ['destroyed']
 
-            if miss:
+                            self._update_player()
+                            return [True, box_x, box_y]
+
+                # The player didn't hit an enemy boat
                 self._shots_fired[self._current_player][(box_x, box_y)] = [(box_x, box_y), (182, 191, 207)]
                 self._update_player()
                 return [False, box_x, box_y]
-            else:
-                self._update_player()
-                return [True, box_x, box_y]
+
+            return [False, box_x, box_y]
 
     def _check_boat_destroyed(self, target_player, vessel):
         """
@@ -220,7 +220,7 @@ class GameLogic:
                         incomplete = False
 
         # For testing print ai positions
-        print(self._vessels_location['ai'])
+        # print(self._vessels_location['ai'])
 
     def setup_game(self):
         """Starts necessary private methods"""
