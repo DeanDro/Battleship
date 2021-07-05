@@ -261,6 +261,8 @@ class GameLogic:
             rand_y = random.randint(50, 650)
             miss = True
             points = self._coord_converter(rand_x, rand_y)
+            print(points)
+            print('Current Player', self.get_current_player())
             for boat in self._vessels_location['human']:
                 for loc in self._vessels_location['human'][boat]:
                     if loc == (points[0], points[1]):
