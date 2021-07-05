@@ -236,30 +236,40 @@ class GameLogic:
         if self._shots_fired['ai'][(x, y)][1] == (255, 0, 0):
             self._active_target = {'active': True, 'coord': (x, y)}
 
-    def _ai_response(self, x, y):
+    def get_ai_response(self):
         """
         A method for all the moves that the AI will do in the game
         """
         if self._active_target['active']:
-            red_box = self._active_target['coord']
+            x = self._active_target['coord'][0]
+            y = self._active_target['coord'][1]
             if self._active_target['coord'][0] < 1001 and not self._shots_fired['ai'][(x+50, y)]:
-                self.get_cannon_coordinates(x+50, y)
+                self.get_cannon_shots(x+50, y)
                 self._update_active_targets(x+50, y)
             elif self._active_target['coord'][0] > 100 and not self._shots_fired['ai'][(x-50, y)]:
-                self.get_cannon_coordinates(x-50, y)
+                self.get_cannon_shots(x-50, y)
                 self._update_active_targets(x-50, y)
             elif self._active_target['coord'][1] > 100 and not self._shots_fired['ai'][(x, y-50)]:
-                self.get_cannon_coordinates(x, y-50)
+                self.get_cannon_shots(x, y-50)
                 self._update_active_targets(x, y-50)
             elif self._active_target['coord'][1] < 600 and not self._shots_fired['ai'][(x, y+50)]:
-                self.get_cannon_coordinates(x, y+50)
+                self.get_cannon_shots(x, y+50)
                 self._update_active_targets(x, y+50)
+            self._update_player()
         else:
             rand_x = random.randint(50, 1050)
             rand_y = random.randint(50, 650)
-            self._coord_converter(rand_x, rand_y)
-            if self._shots_fired['ai'][(rand_x, rand_y)][1] == (255, 0, 0):
-                self._active_target = {'active': True, 'coord': (rand_x, rand_y)}
+            miss = True
+            points = self._coord_converter(rand_x, rand_y)
+            for boat in self._vessels_location['human']:
+                for loc in self._vessels_location['human'][boat]:
+                    if loc == (points[0], points[1]):
+                        miss = False
+                        self._shots_fired['ai'][(points[0], points[1])] = [(points[0], points[1]), (255, 0, 0)]
+                        self._active_target = {'active': True, 'coord': (rand_x, rand_y)}
+            if miss:
+                self._shots_fired['ai'][(points[0], points[1])] = [(points[0], points[1]), (182, 191, 207)]
+            self._update_player()
 
     def _update_vessels(self, coordx, coordy, target_player, ship):
         """
