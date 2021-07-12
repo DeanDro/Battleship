@@ -50,14 +50,15 @@ class BattleShip:
                 self._vertical_horizontal_lines()
                 self._game_status = 'PLAY'
                 pygame.draw.rect(self._screen, (54, 48, 33), pygame.Rect(1100, 550, 100, 50))
-                self._setup_button(str(self._game_logic.get_opponent()), 100, 50, (54, 48, 33))
+                self._setup_button(str(self._game_logic.get_current_player()), 100, 50, (54, 48, 33))
                 pygame.display.update()
             elif self._game_status == 'PLAY':
                 self.mark_active_boats([1100, 30])
                 self.mark_active_boats([1100, 200], 'human')
-                self._setup_button(str(self._game_logic.get_opponent()), 100, 50, (54, 48, 33))
+                self._setup_button(str(self._game_logic.get_current_player()), 100, 50, (54, 48, 33))
                 if self._game_logic.get_current_player() == 'human':
                     self._listen_for_clicks(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+                    self._load_shots_on_map('human')
                 else:
                     self._game_logic.get_ai_response()
                 self._check_for_winner()

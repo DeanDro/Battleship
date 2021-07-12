@@ -243,16 +243,16 @@ class GameLogic:
         if self._active_target['active']:
             x = self._active_target['coord'][0]
             y = self._active_target['coord'][1]
-            if self._active_target['coord'][0] < 1001 and not self._shots_fired['ai'][(x+50, y)]:
+            if x < 1000 and (x+50, y) not in self._shots_fired['ai'].keys():
                 self.get_cannon_shots(x+50, y)
                 self._update_active_targets(x+50, y)
-            elif self._active_target['coord'][0] > 100 and not self._shots_fired['ai'][(x-50, y)]:
+            elif x > 100 and (x-50, y) not in self._shots_fired['ai'].keys():
                 self.get_cannon_shots(x-50, y)
                 self._update_active_targets(x-50, y)
-            elif self._active_target['coord'][1] > 100 and not self._shots_fired['ai'][(x, y-50)]:
+            elif y > 100 and (x, y-50) not in self._shots_fired['ai']:
                 self.get_cannon_shots(x, y-50)
                 self._update_active_targets(x, y-50)
-            elif self._active_target['coord'][1] < 600 and not self._shots_fired['ai'][(x, y+50)]:
+            elif y < 550 and (x, y-50) not in self._shots_fired['ai'].keys():
                 self.get_cannon_shots(x, y+50)
                 self._update_active_targets(x, y+50)
             self._update_player()
@@ -261,14 +261,12 @@ class GameLogic:
             rand_y = random.randint(50, 650)
             miss = True
             points = self._coord_converter(rand_x, rand_y)
-            print(points)
-            print('Current Player', self.get_current_player())
             for boat in self._vessels_location['human']:
                 for loc in self._vessels_location['human'][boat]:
                     if loc == (points[0], points[1]):
                         miss = False
                         self._shots_fired['ai'][(points[0], points[1])] = [(points[0], points[1]), (255, 0, 0)]
-                        self._active_target = {'active': True, 'coord': (rand_x, rand_y)}
+                        self._active_target = {'active': True, 'coord': (points[0], points[1])}
             if miss:
                 self._shots_fired['ai'][(points[0], points[1])] = [(points[0], points[1]), (182, 191, 207)]
             self._update_player()
@@ -281,3 +279,18 @@ class GameLogic:
         for i in range(len(self._vessels_location[target_player][ship])):
             if self._vessels_location[target_player][ship][i] == (coordx, coordy):
                 self._vessels_location[target_player][ship][i] = ['hit']
+
+    def _check_neighboring_boxes(self, coordx, coordy, neighboring_box):
+        """
+        Checks if neighboring box has already been selected. Takes parameters coord x and y and neighboring box.
+        """
+        if (coordx+50, coordy) not in self._shots_fired['ai'].keys():
+            print('Not selected')
+            print(coordx+50)
+
+
+# Testing Code
+
+if __name__ == '__main__':
+    test = GameLogic('Test')
+    test._check_neighboring_boxes(101, 51, 'test')
